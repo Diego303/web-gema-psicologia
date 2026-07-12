@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Frame from '../components/Frame.astro';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+import bienvenida from '../assets/inicio-bienvenida.jpg';
+---
+<Base
+  title={site.brand}
+  description="Gema Mascaraque, Psicóloga General Sanitaria en Alcalá de Henares y online. Un lugar seguro donde empezar a ver, sentir y sanar."
+  current="inicio"
+>
+  <Hero />
+
+  <section class="welcome"><div class="wrap">
+    <Frame class="sq reveal" image={bienvenida} alt="Gema Mascaraque, psicóloga, en la consulta" />
+    <div class="reveal">
+      <h2>Bienvenido/a a {site.brand}</h2>
+      <p>Enfrentarse a lo que da miedo y empezar a hacer cambios no es fácil, pero no tienes por qué hacerlo solo/a. He creado este espacio para acompañarte en el camino de la forma que necesites, sin juicios, sin prisas, donde poder ayudarte a reconectar contigo mismo/a, cuidarte y respetarte.</p>
+      <p>Sentir que una parte de ti no está bien no significa que estés roto/a, es un acto muy valiente, y es el primer paso hacia la sanación.</p>
+      <div class="more cta-row"><a href={url('sobre-mi/')} class="btn btn-primary">Conóceme</a><a href={url('servicios/')} class="btn btn-ghost">Cómo te acompaño</a></div>
+    </div>
+  </div></section>
+</Base>

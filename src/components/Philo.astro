@@ -1,0 +1,13 @@
+---
+interface Props {
+  quote: string;
+  cite: string;
+}
+const { quote, cite } = Astro.props;
+---
+<div class="philo reveal">
+  <div class="ripples"><span class="ring"></span><span class="ring"></span></div>
+  <svg class="pl" viewBox="0 0 200 150"><use href="#lotus-shape"/></svg>
+  <blockquote>{quote}</blockquote>
+  <cite>{cite}</cite>
+</div>

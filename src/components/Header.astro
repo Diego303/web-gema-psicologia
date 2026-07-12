@@ -1,0 +1,16 @@
+---
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+interface Props {
+  /** Clave de la página activa: 'inicio' | 'servicios' | 'sobre' | 'contacto'. */
+  current?: string;
+}
+const { current } = Astro.props;
+---
+<header id="hd"><nav>
+<a class="brand" href={url('')} aria-label="Inicio"><svg viewBox="0 0 200 150"><use href="#lotus-shape"/></svg></a>
+<div class="menu">{site.nav.map((i) => (
+  <a href={i.href} class={current === i.key ? 'is-active' : undefined}>{i.label}</a>
+))}</div>
+<button class="burger" aria-label="Menú">☰</button></nav></header>

@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import WorkBlock from '../components/WorkBlock.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+import { services } from '../data/services';
+---
+<Base
+  title={`Servicios · ${site.brand}`}
+  description="Acompañamiento en síntomas emocionales, autoestima, trauma y estrés, duelo y problemas alimentarios. Sesiones presenciales en Alcalá de Henares y online."
+  current="servicios"
+>
+  <section class="page-head lead"><div class="wrap">
+    <span class="eyebrow">Servicios</span>
+    <h1>¿De qué forma te puedo <span>acompañar?</span></h1>
+    <p>Sé que cuidarse no es algo fácil, supone mucho tiempo y esfuerzo, y muchas veces no sabemos cómo empezar a hacerlo. Por eso, me adapto a tu situación y necesidades desde el primer momento, ofreciendo diferentes formas de empezar este camino:</p>
+    <div class="cta-row">
+      <a href={site.bookingPresencial} class="btn btn-primary">Reservar presencial</a>
+      <a href={site.bookingOnline} class="btn btn-ghost">Reservar online</a>
+    </div>
+    <div class="chips"><span class="chip"><b>Presencial</b> · {site.location}</span><span class="chip"><b>Online</b> · {site.online}</span></div>
+  </div></section>
+
+  <section class="work"><div class="wrap">
+    <div class="center reveal"><h2>¿Qué podemos trabajar juntos?</h2></div>
+
+    {services.map((s) => <WorkBlock {...s} />)}
+  </div></section>
+
+  <section><div class="wrap">
+    <CtaBand
+      title="¿Damos el primer paso?"
+      text="Reserva una primera sesión. Elige la modalidad que mejor te venga."
+      buttons={[
+        { href: site.bookingPresencial, label: 'Reservar presencial', class: 'btn-light' },
+        { href: site.bookingOnline, label: 'Reservar online', class: 'btn-out' },
+      ]}
+    />
+  </div></section>
+</Base>

@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+import LotusDefs from '../components/LotusDefs.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { url } from '../lib/url';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Clave de la página activa: 'inicio' | 'servicios' | 'sobre' | 'contacto'. */
+  current: string;
+}
+const { title, description, current } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mulish:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href={url('favicon.png')} />
+  <link rel="apple-touch-icon" href={url('favicon.png')} />
+</head>
+<body class={current === 'inicio' ? 'home' : undefined}>
+<LotusDefs />
+<Header current={current} />
+<main><slot /></main>
+<Footer />
+<script>
+  // Header con fondo al hacer scroll (sobre el hero transparente en la home).
+  const hd = document.getElementById('hd');
+  if (hd) addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 30));
+
+  // Reveal-on-scroll.
+  const io = new IntersectionObserver(
+    (es) =>
+      es.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      }),
+    { threshold: 0.14 }
+  );
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+  // Menú hamburguesa (móvil).
+  const b = document.querySelector<HTMLButtonElement>('.burger');
+  if (b)
+    b.addEventListener('click', () => {
+      const m = document.querySelector<HTMLElement>('.menu');
+      if (!m) return;
+      const o = m.style.display === 'flex';
+      m.style.display = o ? 'none' : 'flex';
+      m.style.position = 'absolute';
+      m.style.flexDirection = 'column';
+      m.style.top = '86px';
+      m.style.right = '26px';
+      m.style.background = 'rgba(232,238,240,.97)';
+      m.style.padding = '18px 26px';
+      m.style.borderRadius = '16px';
+      m.style.gap = '14px';
+      m.style.boxShadow = '0 20px 50px -30px rgba(30,58,76,.5)';
+    });
+</script>
+</body>
+</html>

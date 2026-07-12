@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import Frame from '../components/Frame.astro';
+import Philo from '../components/Philo.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+import sobre1 from '../assets/sobre-mi-1.jpg';
+import sobre2 from '../assets/sobre-mi-2.jpg';
+import sobre3 from '../assets/sobre-mi-3.jpg';
+---
+<Base
+  title={`Sobre mí · ${site.brand}`}
+  description="Conoce a Gema Mascaraque, Psicóloga General Sanitaria. Enfoque integrador basado en la evidencia, con formación y experiencia en distintos ámbitos."
+  current="sobre"
+>
+  <section class="page-head"><div class="wrap">
+    <span class="eyebrow">Sobre mí</span>
+    <h1>Hola, soy <span>{site.name}</span></h1>
+  </div></section>
+
+  <section style="padding-top:30px"><div class="wrap">
+    <div class="bio-intro reveal">
+      <Frame class="a" image={sobre1} alt="Retrato de Gema Mascaraque" />
+      <Frame class="b" image={sobre2} alt="Gema Mascaraque durante una sesión online" />
+    </div>
+
+    <div class="bio-text reveal">
+      <h2>Mi forma de trabajar</h2>
+      <p>Soy Psicóloga Sanitaria, y mi forma de trabajar es desde un enfoque integrador, combinando herramientas de diferentes modelos psicológicos basados en la evidencia, porque creo que cada uno de nosotros/as es único/a, y mi trabajo consiste en acompañarte de la forma que necesites, aquella que te permita sentirte seguro/a para expresar y elaborar todo lo que no se puede fuera.</p>
+    </div>
+
+    <div class="bio-text reveal">
+      <h2>Mi formación</h2>
+      <p>Soy Psicóloga General Sanitaria, especializada en diferentes ámbitos:</p>
+      <ul class="dotlist">
+        <li>Abordaje Integral de la Psicología en Psicólogos Princesa 81.</li>
+        <li>Intervención Integral en Trastornos de la Conducta Alimentaria (TCA) en Instituto Centta.</li>
+        <li>Trastornos del Espectro Autista en ISEP.</li>
+        <li>Neuromanagement y Gestión del Talento en ISEP.</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <Philo quote="«Sanar no es forzar la corriente, sino aprender a fluir con ella.»" cite="Mi forma de acompañar" />
+  </div></section>
+
+  <section style="padding-top:20px"><div class="wrap">
+    <div class="bio-row rev reveal">
+      <Frame image={sobre3} alt="Gema Mascaraque acompañando a un paciente en consulta" />
+      <div>
+        <span class="eyebrow">Experiencia profesional</span>
+        <h2>Mi experiencia</h2>
+        <p>Llevo 2 años trabajando con niños, adolescentes y adultos con diferentes tipos de necesidades: ansiedad, depresión, duelo, trauma, baja autoestima, trastornos alimentarios y dificultades sociales, entre otros.</p>
+        <p>Durante este tiempo, también he colaborado como voluntaria en uno de los programas de atención psicológica a largo plazo para las víctimas de la DANA de 2024 en Valencia.</p>
+        <p>La variedad en mi experiencia me ha enseñado a trabajar con la persona que hay detrás de sus dificultades, adaptando cada herramienta a necesidades reales.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <CtaBand
+      title="¿Hablamos?"
+      text="Si crees que puedo ayudarte, escríbeme. Estaré encantada de acompañarte."
+      buttons={[
+        { href: url('contacto/'), label: 'Ir a contacto', class: 'btn-light' },
+        { href: url('servicios/'), label: 'Ver servicios', class: 'btn-out' },
+      ]}
+    />
+  </div></section>
+</Base>

@@ -1,0 +1,10 @@
+---
+interface Props {
+  /** Etiqueta que se muestra dentro del marcador (p. ej. "Foto de la psicóloga"). */
+  label: string;
+  /** Clase(s) extra opcionales para el contenedor .imgph. */
+  class?: string;
+}
+const { label, class: className } = Astro.props;
+---
+<div class:list={['imgph', className]}><div class="sun"></div><div class="hzr"></div><svg class="sil" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="60" cy="46" r="22"/><path d="M22 104c0-21 17-32 38-32s38 11 38 32"/></svg><span class="lbl">{label}</span></div>

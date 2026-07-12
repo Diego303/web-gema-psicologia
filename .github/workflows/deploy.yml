@@ -1,0 +1,43 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Despliega en cada push a `main`
+  push:
+    branches: [main]
+  # Permite lanzarlo manualmente desde la pestaña Actions
+  workflow_dispatch:
+
+# Permisos necesarios para clonar el repo y publicar en Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un único despliegue concurrente; no cancela uno en curso
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build con Astro
+        # withastro/action detecta el proyecto, instala dependencias,
+        # hace `build` y sube el artefacto de Pages automáticamente.
+        uses: withastro/action@v3
+        with:
+          package-manager: pnpm@9
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

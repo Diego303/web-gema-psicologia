@@ -4,36 +4,34 @@ import WorkBlock from '../components/WorkBlock.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site';
 import { services } from '../data/services';
+import content from '../data/content.json';
+const c = content.servicios;
 ---
-<Base
-  title={`Servicios · ${site.brand}`}
-  description="Acompañamiento en síntomas emocionales, autoestima, trauma y estrés, duelo y problemas alimentarios. Sesiones presenciales en Alcalá de Henares y online."
-  current="servicios"
->
+<Base title={c.meta.title} description={c.meta.description} current="servicios">
   <section class="page-head lead"><div class="wrap">
-    <span class="eyebrow">Servicios</span>
-    <h1>¿De qué forma te puedo <span>acompañar?</span></h1>
-    <p>Sé que cuidarse no es algo fácil, supone mucho tiempo y esfuerzo, y muchas veces no sabemos cómo empezar a hacerlo. Por eso, me adapto a tu situación y necesidades desde el primer momento, ofreciendo diferentes formas de empezar este camino:</p>
+    <span class="eyebrow">{c.head.eyebrow}</span>
+    <h1>{c.head.title} <span>{c.head.titleAccent}</span></h1>
+    <p>{c.head.intro}</p>
     <div class="cta-row">
-      <a href={site.bookingPresencial} class="btn btn-primary">Reservar presencial</a>
-      <a href={site.bookingOnline} class="btn btn-ghost">Reservar online</a>
+      <a href={site.bookingPresencial} class="btn btn-primary">{c.head.buttons.presencial}</a>
+      <a href={site.bookingOnline} class="btn btn-ghost">{c.head.buttons.online}</a>
     </div>
-    <div class="chips"><span class="chip"><b>Presencial</b> · {site.location}</span><span class="chip"><b>Online</b> · {site.online}</span></div>
+    <div class="chips"><span class="chip"><b>{c.head.chips.presencial}</b> · {site.location}</span><span class="chip"><b>{c.head.chips.online}</b> · {site.online}</span></div>
   </div></section>
 
   <section class="work"><div class="wrap">
-    <div class="center reveal"><h2>¿Qué podemos trabajar juntos?</h2></div>
+    <div class="center reveal"><h2>{c.workTitle}</h2></div>
 
     {services.map((s) => <WorkBlock {...s} />)}
   </div></section>
 
   <section><div class="wrap">
     <CtaBand
-      title="¿Damos el primer paso?"
-      text="Reserva una primera sesión. Elige la modalidad que mejor te venga."
+      title={c.cta.title}
+      text={c.cta.text}
       buttons={[
-        { href: site.bookingPresencial, label: 'Reservar presencial', class: 'btn-light' },
-        { href: site.bookingOnline, label: 'Reservar online', class: 'btn-out' },
+        { href: site.bookingPresencial, label: c.cta.buttons.presencial, class: 'btn-light' },
+        { href: site.bookingOnline, label: c.cta.buttons.online, class: 'btn-out' },
       ]}
     />
   </div></section>

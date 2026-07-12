@@ -35,41 +35,43 @@ Todos se ejecutan desde la raíz del proyecto:
 
 ## ✏️ Cómo editar los contenidos
 
-Casi todo lo editable está centralizado en **`src/data/`**:
+**TODO el texto y los datos están centralizados en un único archivo:**
+[`src/data/content.json`](src/data/content.json). Cambia ahí cualquier texto,
+teléfono, correo, enlace de reserva, etc., y la web se actualiza sola. No hace
+falta tocar el código de las páginas.
 
-### `src/data/site.ts` — datos del negocio
-Nombre, rol, nº de colegiada, teléfono, email, ubicación, horario, navegación y
-**los enlaces de reserva**. Edita aquí y se actualiza en todas las páginas:
+Está organizado por secciones:
 
-```ts
-export const site = {
-  brand: 'Gema Mascaraque Psicología',
-  name: 'Gema Mascaraque',
-  role: 'Psicóloga General Sanitaria',
-  colegiada: 'Col. nº 000',        // ← nº de colegiada real
-  phone: '+34 600 00 00 00',       // ← teléfono real
-  email: 'hola@tudominio.com',     // ← email real
-  location: 'Alcalá de Henares (Madrid)',
-  online: 'Desde cualquier parte',
-  bookingPresencial: '#', // ← pega aquí tu enlace de reserva presencial (p. ej. Calendly)
-  bookingOnline: '#',     // ← pega aquí tu enlace de reserva online
-  // ...
-};
+- **`global`** → datos del negocio compartidos por toda la web: `brand`, `name`,
+  `role`, `colegiada`, `phone`, `whatsapp`, `email`, `location`, `online`, los
+  **enlaces de reserva** (`booking.presencial` / `booking.online`) y el menú (`nav`).
+- **`inicio`** → `meta` (SEO), `hero` (título/subtítulo) y `welcome` (bienvenida).
+- **`servicios`** → `meta`, `head` (intro + chips), `blocks` (los 5 servicios con
+  su lista de ítems) y `cta`.
+- **`sobre`** → `meta`, `head`, `intro`, `formacion`, `philo` (cita), `experiencia` y `cta`.
+- **`contacto`** → `meta`, textos, etiquetas de los datos y botones.
+
+```jsonc
+"global": {
+  "colegiada": "...",          // ← nº de colegiada real
+  "phone": "+34 600 00 00 00", // ← teléfono para llamadas
+  "whatsapp": "+34 600 00 00 00", // ← número de WhatsApp
+  "email": "hola@tudominio.com",  // ← email real
+  "booking": {
+    "presencial": "#",  // ← enlace de reserva presencial (Doctoralia, Calendly…)
+    "online": "#"       // ← enlace de reserva online
+  }
+}
 ```
 
-> Quedan como ejemplo (rellénalos con datos reales): `colegiada`, `phone`,
-> `email`, `bookingPresencial`, `bookingOnline`.
+> Rellena con datos reales: `phone`, `whatsapp`, `email` y
+> `booking.presencial` / `booking.online` (ahora son valores de ejemplo).
 
-### `src/data/services.ts` — bloques de la página de Servicios
-Son **5 bloques** (Síntomas emocionales, Autoestima, Trauma y estrés, Duelo,
-Problemas alimentarios). Cada uno tiene `title`, `items[]`, `image` y `side`
-(`'right'` foto a la derecha · `'left'` foto a la izquierda), más `eyebrow` y
-`note` opcionales. La página `servicios.astro` los recorre automáticamente.
-
-### Textos largos
-Las presentaciones de **Sobre mí** y la **bienvenida** del inicio están como
-texto editable (con marcadores `[entre corchetes]`) directamente en
-`src/pages/sobre-mi.astro` e `src/pages/index.astro`.
+### Nota técnica
+Las páginas leen el JSON directamente; `src/data/site.ts` y `src/data/services.ts`
+solo lo *derivan* (calculan los enlaces del menú con el `base` correcto y asocian
+cada bloque de Servicios con su imagen). Las **imágenes** no van en el JSON porque
+las optimiza `astro:assets`: se importan en las páginas / en `services.ts`.
 
 ---
 

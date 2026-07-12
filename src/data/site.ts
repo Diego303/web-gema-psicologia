@@ -1,36 +1,27 @@
+import content from './content.json';
 import { url } from '../lib/url';
 
 /**
- * Datos del negocio centralizados.
- * Edita SOLO este archivo para cambiar nombre, contacto y enlaces de reserva:
- * todas las páginas leen de aquí.
- *
- * Pendientes de rellenar con datos reales (ahora con valores de ejemplo):
- *   colegiada, phone, email, bookingPresencial, bookingOnline.
+ * Datos globales del negocio, derivados de content.json (sección "global").
+ * NO edites los textos aquí: edítalos en src/data/content.json.
+ * Este módulo solo reconstruye el objeto `site` y calcula los `href` del menú
+ * (con url(), para respetar el `base` de GitHub Pages).
  */
+const g = content.global;
+
 export const site = {
-  brand: 'Gema Mascaraque Psicología',
-  name: 'Gema Mascaraque',
-  role: 'Psicóloga General Sanitaria',
-  colegiada: 'Col. nº 000', // ← nº de colegiada real
-  phone: '+34 600 00 00 00', // ← teléfono para llamadas
-  whatsapp: '+34 600 00 00 00', // ← número de WhatsApp
-  email: 'hola@tudominio.com', // ← email real
-  location: 'Alcalá de Henares (Madrid)',
-  online: 'Desde cualquier parte',
-
-  // ↓ Pega aquí tus enlaces de reserva (p. ej. Calendly). Por defecto "#".
-  bookingPresencial: '#',
-  bookingOnline: '#',
-
-  // Navegación principal (también usada en el footer).
-  // Los `href` se generan con url() para respetar el `base` de GitHub Pages.
-  nav: [
-    { href: url(''), label: 'Inicio', key: 'inicio' },
-    { href: url('servicios/'), label: 'Servicios', key: 'servicios' },
-    { href: url('sobre-mi/'), label: 'Sobre mí', key: 'sobre' },
-    { href: url('contacto/'), label: 'Contacto', key: 'contacto' },
-  ],
-} as const;
+  brand: g.brand,
+  name: g.name,
+  role: g.role,
+  colegiada: g.colegiada,
+  phone: g.phone,
+  whatsapp: g.whatsapp,
+  email: g.email,
+  location: g.location,
+  online: g.online,
+  bookingPresencial: g.booking.presencial,
+  bookingOnline: g.booking.online,
+  nav: g.nav.map((n) => ({ href: url(n.path), label: n.label, key: n.key })),
+};
 
 export type NavItem = (typeof site.nav)[number];

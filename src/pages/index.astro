@@ -2,24 +2,21 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import Frame from '../components/Frame.astro';
-import { site } from '../data/site';
+import content from '../data/content.json';
 import { url } from '../lib/url';
 import bienvenida from '../assets/inicio-bienvenida.jpg';
+const c = content.inicio;
 ---
-<Base
-  title={site.brand}
-  description="Gema Mascaraque, Psicóloga General Sanitaria en Alcalá de Henares y online. Un lugar seguro donde empezar a ver, sentir y sanar."
-  current="inicio"
->
+<Base title={c.meta.title} description={c.meta.description} current="inicio">
   <Hero />
 
   <section class="welcome"><div class="wrap">
-    <Frame class="sq reveal" image={bienvenida} alt="Gema Mascaraque, psicóloga, en la consulta" />
+    <Frame class="sq reveal" image={bienvenida} alt={c.welcome.imageAlt} />
     <div class="reveal">
-      <h2>Bienvenido/a a {site.brand}</h2>
-      <p>Enfrentarse a lo que da miedo y empezar a hacer cambios no es fácil, pero no tienes por qué hacerlo solo/a. He creado este espacio para acompañarte en el camino de la forma que necesites, sin juicios, sin prisas, donde poder ayudarte a reconectar contigo mismo/a, cuidarte y respetarte.</p>
-      <p>Sentir que una parte de ti no está bien no significa que estés roto/a, es un acto muy valiente, y es el primer paso hacia la sanación.</p>
-      <div class="more cta-row"><a href={url('sobre-mi/')} class="btn btn-primary">Conóceme</a><a href={url('servicios/')} class="btn btn-ghost">Cómo te acompaño</a></div>
+      <h2>{c.welcome.title}</h2>
+      <p>{c.welcome.paragraphs[0]}</p>
+      <p>{c.welcome.paragraphs[1]}</p>
+      <div class="more cta-row"><a href={url('sobre-mi/')} class="btn btn-primary">{c.welcome.buttons.conoceme}</a><a href={url('servicios/')} class="btn btn-ghost">{c.welcome.buttons.acompano}</a></div>
     </div>
   </div></section>
 </Base>

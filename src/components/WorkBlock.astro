@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+import ImagePlaceholder from './ImagePlaceholder.astro';
+import { responsiveWidths } from '../lib/img';
+import type { ServiceBlock } from '../data/services';
+
+type Props = ServiceBlock;
+const { eyebrow, title, items, note, image, imageAlt, side } = Astro.props;
+---
+<div class:list={['block', side === 'left' && 'rev', 'reveal']}><div>
+  {eyebrow && <span class="eyebrow">{eyebrow}</span>}<h3 class="t">{title}</h3>
+  <ul>{items.map((it) => <li>{it}</li>)}</ul>
+  {note && <p class="note">{note}</p>}
+</div><div class="ph">
+  {image ? (
+    <Fragment>
+      <Image src={image} alt={imageAlt ?? title} widths={responsiveWidths(image)} sizes="(max-width:920px) 100vw, 50vw" />
+      <div class="ptint"></div>
+    </Fragment>
+  ) : (
+    <ImagePlaceholder label="Foto opcional" />
+  )}
+</div></div>

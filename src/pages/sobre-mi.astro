@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import Frame from '../components/Frame.astro';
+import Philo from '../components/Philo.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+import content from '../data/content.json';
+import { url } from '../lib/url';
+import sobre1 from '../assets/sobre-mi-1.jpg';
+import sobre2 from '../assets/sobre-mi-2.jpg';
+import sobre3 from '../assets/sobre-mi-3.jpg';
+const c = content.sobre;
+---
+<Base title={c.meta.title} description={c.meta.description} current="sobre">
+  <section class="page-head"><div class="wrap">
+    <span class="eyebrow">{c.head.eyebrow}</span>
+    <h1>{c.head.title} <span>{site.name}</span></h1>
+  </div></section>
+
+  <section style="padding-top:30px"><div class="wrap">
+    <div class="bio-intro reveal">
+      <Frame class="a" image={sobre1} alt={c.intro.imageAlt1} />
+      <Frame class="b" image={sobre2} alt={c.intro.imageAlt2} />
+    </div>
+
+    <div class="bio-text reveal">
+      <h2>{c.intro.title}</h2>
+      <p>{c.intro.paragraph}</p>
+    </div>
+
+    <div class="bio-text reveal">
+      <h2>{c.formacion.title}</h2>
+      <p>{c.formacion.intro}</p>
+      <ul class="dotlist">
+        {c.formacion.items.map((it) => <li>{it}</li>)}
+      </ul>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <Philo quote={c.philo.quote} cite={c.philo.cite} />
+  </div></section>
+
+  <section style="padding-top:20px"><div class="wrap">
+    <div class="bio-row rev reveal">
+      <Frame image={sobre3} alt={c.experiencia.imageAlt} />
+      <div>
+        <span class="eyebrow">{c.experiencia.eyebrow}</span>
+        <h2>{c.experiencia.title}</h2>
+        {c.experiencia.paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <CtaBand
+      title={c.cta.title}
+      text={c.cta.text}
+      buttons={[
+        { href: url('contacto/'), label: c.cta.buttons.contacto, class: 'btn-light' },
+        { href: url('servicios/'), label: c.cta.buttons.servicios, class: 'btn-out' },
+      ]}
+    />
+  </div></section>
+</Base>

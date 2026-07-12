@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Frame from '../components/Frame.astro';
+import content from '../data/content.json';
+import { url } from '../lib/url';
+import bienvenida from '../assets/inicio-bienvenida.jpg';
+const c = content.inicio;
+---
+<Base title={c.meta.title} description={c.meta.description} current="inicio">
+  <Hero />
+
+  <section class="welcome"><div class="wrap">
+    <Frame class="sq reveal" image={bienvenida} alt={c.welcome.imageAlt} />
+    <div class="reveal">
+      <h2>{c.welcome.title}</h2>
+      <p>{c.welcome.paragraphs[0]}</p>
+      <p>{c.welcome.paragraphs[1]}</p>
+      <div class="more cta-row"><a href={url('sobre-mi/')} class="btn btn-primary">{c.welcome.buttons.conoceme}</a><a href={url('servicios/')} class="btn btn-ghost">{c.welcome.buttons.acompano}</a></div>
+    </div>
+  </div></section>
+</Base>

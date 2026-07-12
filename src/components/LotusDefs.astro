@@ -1,0 +1,27 @@
+---
+// Definiciones SVG del loto (gradientes + <symbol id="lotus-shape">).
+// Debe estar presente en cada página para que los <use href="#lotus-shape"/>
+// del header, hero, philo y footer puedan referenciar la silueta.
+---
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="petalG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D7E6EC"/></linearGradient>
+<linearGradient id="petalF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EAF2F4"/></linearGradient>
+<radialGradient id="ctrG"><stop offset="0" stop-color="#F4E6BE"/><stop offset="1" stop-color="#D7C39E"/></radialGradient>
+<symbol id="lotus-shape" viewBox="0 0 200 150">
+<ellipse cx="100" cy="124" rx="74" ry="9" fill="rgba(25,38,46,.18)"/>
+<ellipse cx="68" cy="116" rx="44" ry="11" fill="#7E978A" opacity=".9"/><ellipse cx="134" cy="118" rx="40" ry="10" fill="#6f897c" opacity=".9"/>
+<g stroke="#CADEE3" stroke-width="1">
+<path d="M100,108 C80,86 78,50 100,14 C122,50 120,86 100,108 Z" fill="url(#petalG)" transform="rotate(-66 100 108)"/>
+<path d="M100,108 C80,86 78,50 100,14 C122,50 120,86 100,108 Z" fill="url(#petalG)" transform="rotate(-33 100 108)"/>
+<path d="M100,108 C80,86 78,50 100,14 C122,50 120,86 100,108 Z" fill="url(#petalG)"/>
+<path d="M100,108 C80,86 78,50 100,14 C122,50 120,86 100,108 Z" fill="url(#petalG)" transform="rotate(33 100 108)"/>
+<path d="M100,108 C80,86 78,50 100,14 C122,50 120,86 100,108 Z" fill="url(#petalG)" transform="rotate(66 100 108)"/></g>
+<g stroke="#E0ECEF" stroke-width="1">
+<path d="M100,108 C86,90 84,62 100,34 C116,62 114,90 100,108 Z" fill="url(#petalF)" transform="rotate(-48 100 108)"/>
+<path d="M100,108 C86,90 84,62 100,34 C116,62 114,90 100,108 Z" fill="url(#petalF)" transform="rotate(-16 100 108)"/>
+<path d="M100,108 C86,90 84,62 100,34 C116,62 114,90 100,108 Z" fill="url(#petalF)" transform="rotate(16 100 108)"/>
+<path d="M100,108 C86,90 84,62 100,34 C116,62 114,90 100,108 Z" fill="url(#petalF)" transform="rotate(48 100 108)"/></g>
+<path d="M100,104 C92,92 91,74 100,58 C109,74 108,92 100,104 Z" fill="#FFFFFF"/>
+<ellipse cx="100" cy="98" rx="11" ry="8" fill="url(#ctrG)"/>
+<g fill="#C2A968"><circle cx="95" cy="96" r="1.5"/><circle cx="105" cy="96" r="1.5"/><circle cx="100" cy="93" r="1.5"/><circle cx="100" cy="100" r="1.5"/></g>
+</symbol></defs></svg>

@@ -1,0 +1,18 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { responsiveWidths } from '../lib/img';
+
+interface Props {
+  /** Imagen importada (asset de src/assets). */
+  image: ImageMetadata;
+  alt: string;
+  /** Clase(s) extra opcionales para el contenedor .frame. */
+  class?: string;
+}
+const { image, alt, class: className } = Astro.props;
+---
+<div class:list={['frame', className]}>
+  <Image src={image} alt={alt} widths={responsiveWidths(image)} sizes="(max-width:920px) 100vw, 50vw" />
+  <div class="ptint"></div>
+</div>

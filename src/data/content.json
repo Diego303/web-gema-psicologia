@@ -1,0 +1,223 @@
+{
+  "_ayuda": "Edita aquí TODOS los textos y datos de la web. Valores de ejemplo a sustituir por datos reales (en 'global'): phone, whatsapp, email, colegiada y booking.presencial / booking.online.",
+
+  "global": {
+    "brand": "Gema Mascaraque Psicología",
+    "name": "Gema Mascaraque",
+    "role": "Psicóloga General Sanitaria",
+    "colegiada": "Núm. Colegiado: M-35737",
+    "phone": "+34 649 68 28 91",
+    "whatsapp": "+34 649 38 28 91",
+    "email": "gemiangel21@gmail.com",
+    "location": "Alcalá de Henares (Madrid)",
+    "online": "Desde cualquier parte",
+    "booking": {
+      "presencial": "https://www.doctoralia.es/gema-mascaraque-ruiz-4/psicologo/torrejon-de-ardoz?prevent-patient-app-banner=true&utm_source=google&utm_medium=gmb&utm_campaign=214098&utm_content=book_visit&rwg_token=AFd1xnF4CCLCMLwl1UccA2Tsq_wUxLRGbO07siG-tGJyu3H1HpmyA9RQ8-b3QmC0UdCmbRCeDxASt7oCIGknM-6hYZTDxI3XaA%3D%3D#highlight-calendar",
+      "online": "https://www.doctoralia.es/gema-mascaraque-ruiz-4/psicologo/torrejon-de-ardoz?prevent-patient-app-banner=true&utm_source=google&utm_medium=gmb&utm_campaign=214098&utm_content=book_visit&rwg_token=AFd1xnF4CCLCMLwl1UccA2Tsq_wUxLRGbO07siG-tGJyu3H1HpmyA9RQ8-b3QmC0UdCmbRCeDxASt7oCIGknM-6hYZTDxI3XaA%3D%3D#highlight-calendar"
+    },
+    "nav": [
+      { "label": "Inicio", "key": "inicio", "path": "" },
+      { "label": "Servicios", "key": "servicios", "path": "servicios/" },
+      { "label": "Sobre mí", "key": "sobre", "path": "sobre-mi/" },
+      { "label": "Contacto", "key": "contacto", "path": "contacto/" }
+    ]
+  },
+
+  "inicio": {
+    "meta": {
+      "title": "Gema Mascaraque Psicología",
+      "description": "Gema Mascaraque, Psicóloga General Sanitaria en Alcalá de Henares y online. Un lugar seguro donde empezar a ver, sentir y sanar."
+    },
+    "hero": {
+      "titleAccent": "Psicología",
+      "subtitle": "Un lugar seguro donde empezar a ver, sentir y sanar."
+    },
+    "welcome": {
+      "title": "Bienvenido/a a Gema Mascaraque Psicología",
+      "paragraphs": [
+        "Enfrentarse a lo que da miedo y empezar a hacer cambios no es fácil, pero no tienes por qué hacerlo solo/a. He creado este espacio para acompañarte en el camino de la forma que necesites, sin juicios, sin prisas, donde poder ayudarte a reconectar contigo mismo/a, cuidarte y respetarte.",
+        "Sentir que una parte de ti no está bien no significa que estés roto/a, es un acto muy valiente, y es el primer paso hacia la sanación."
+      ],
+      "buttons": {
+        "conoceme": "Conóceme",
+        "acompano": "Cómo te acompaño"
+      },
+      "imageAlt": "Gema Mascaraque, psicóloga, en la consulta"
+    }
+  },
+
+  "servicios": {
+    "meta": {
+      "title": "Servicios · Gema Mascaraque Psicología",
+      "description": "Acompañamiento en síntomas emocionales, autoestima, trauma y estrés, duelo y problemas alimentarios. Sesiones presenciales en Alcalá de Henares y online."
+    },
+    "head": {
+      "eyebrow": "Servicios",
+      "title": "¿De qué forma te puedo",
+      "titleAccent": "acompañar?",
+      "intro": "Sé que cuidarse no es algo fácil, supone mucho tiempo y esfuerzo, y muchas veces no sabemos cómo empezar a hacerlo. Por eso, me adapto a tu situación y necesidades desde el primer momento, ofreciendo diferentes formas de empezar este camino:",
+      "buttons": {
+        "presencial": "Reservar presencial",
+        "online": "Reservar online"
+      },
+      "chips": {
+        "presencial": "Presencial",
+        "online": "Online"
+      }
+    },
+    "workTitle": "¿Qué podemos trabajar juntos?",
+    "blocks": [
+      {
+        "id": "sintomas",
+        "title": "Síntomas emocionales",
+        "items": [
+          "Activación intensa",
+          "Evitación de situaciones, lugares, etc.",
+          "Baja tolerancia a las emociones",
+          "Pensamientos recurrentes",
+          "Sensación de soledad y/o vacío",
+          "Desconexión",
+          "Apatía, fatiga",
+          "Tristeza persistente",
+          "Creencias negativas",
+          "Ideas o conductas suicidas"
+        ],
+        "imageAlt": "Persona abrazándose las rodillas, reflejando malestar emocional",
+        "side": "right"
+      },
+      {
+        "id": "autoestima",
+        "title": "Autoestima",
+        "items": [
+          "Crítico interno",
+          "Crisis de identidad",
+          "Pérdida de dirección o propósito",
+          "Cambios vitales importantes",
+          "Búsqueda de significado",
+          "Problemas para tomar decisiones"
+        ],
+        "imageAlt": "Persona escribiendo en un cuaderno, en un momento de introspección",
+        "side": "left"
+      },
+      {
+        "id": "trauma",
+        "title": "Trauma y estrés",
+        "items": [
+          "Estrés crónico",
+          "Hipervigilancia",
+          "Problemas de confianza",
+          "Dificultades para conectar",
+          "Agotamiento emocional",
+          "Miedo a la traición",
+          "Miedo al abandono"
+        ],
+        "imageAlt": "Persona caminando por la calle con gesto de alerta y estrés",
+        "side": "right"
+      },
+      {
+        "id": "duelo",
+        "title": "Duelo",
+        "items": [
+          "Pérdida de un ser querido",
+          "Pérdida de una mascota",
+          "Pérdida de rango social",
+          "Pérdida de un embarazo o bebé",
+          "Ruptura de vínculos"
+        ],
+        "imageAlt": "Retrato enmarcado rodeado de velas, en recuerdo de un ser querido",
+        "side": "left"
+      },
+      {
+        "id": "alimentarios",
+        "title": "Problemas alimentarios",
+        "items": [
+          "Preocupación por la comida",
+          "Preocupación por el peso",
+          "Preocupación por la figura corporal",
+          "Atracones",
+          "Conductas compensatorias (ejercicio, vómitos, laxantes, etc.)"
+        ],
+        "imageAlt": "Persona frente a la mesa con comida, mostrando angustia",
+        "side": "right"
+      }
+    ],
+    "cta": {
+      "title": "¿Damos el primer paso?",
+      "text": "Reserva una primera sesión. Elige la modalidad que mejor te venga.",
+      "buttons": {
+        "presencial": "Reservar presencial",
+        "online": "Reservar online"
+      }
+    }
+  },
+
+  "sobre": {
+    "meta": {
+      "title": "Sobre mí · Gema Mascaraque Psicología",
+      "description": "Conoce a Gema Mascaraque, Psicóloga General Sanitaria. Enfoque integrador basado en la evidencia, con formación y experiencia en distintos ámbitos."
+    },
+    "head": {
+      "eyebrow": "Sobre mí",
+      "title": "Hola, soy"
+    },
+    "intro": {
+      "title": "Mi forma de trabajar",
+      "paragraph": "Soy Psicóloga Sanitaria, y mi forma de trabajar es desde un enfoque integrador, combinando herramientas de diferentes modelos psicológicos basados en la evidencia, porque creo que cada uno de nosotros/as es único/a, y mi trabajo consiste en acompañarte de la forma que necesites, aquella que te permita sentirte seguro/a para expresar y elaborar todo lo que no se puede fuera.",
+      "imageAlt1": "Retrato de Gema Mascaraque",
+      "imageAlt2": "Gema Mascaraque durante una sesión online"
+    },
+    "formacion": {
+      "title": "Mi formación",
+      "intro": "Soy Psicóloga General Sanitaria, especializada en diferentes ámbitos:",
+      "items": [
+        "Abordaje Integral de la Psicología en Psicólogos Princesa 81.",
+        "Intervención Integral en Trastornos de la Conducta Alimentaria (TCA) en Instituto Centta.",
+        "Trastornos del Espectro Autista en ISEP.",
+        "Neuromanagement y Gestión del Talento en ISEP."
+      ]
+    },
+    "philo": {
+      "quote": "«Sanar no es forzar la corriente, sino aprender a fluir con ella.»",
+      "cite": "Mi forma de acompañar"
+    },
+    "experiencia": {
+      "eyebrow": "Experiencia profesional",
+      "title": "Mi experiencia",
+      "paragraphs": [
+        "Llevo 2 años trabajando con niños, adolescentes y adultos con diferentes tipos de necesidades: ansiedad, depresión, duelo, trauma, baja autoestima, trastornos alimentarios y dificultades sociales, entre otros.",
+        "Durante este tiempo, también he colaborado como voluntaria en uno de los programas de atención psicológica a largo plazo para las víctimas de la DANA de 2024 en Valencia.",
+        "La variedad en mi experiencia me ha enseñado a trabajar con la persona que hay detrás de sus dificultades, adaptando cada herramienta a necesidades reales."
+      ],
+      "imageAlt": "Gema Mascaraque acompañando a un paciente en consulta"
+    },
+    "cta": {
+      "title": "¿Hablamos?",
+      "text": "Si crees que puedo ayudarte, escríbeme. Estaré encantada de acompañarte.",
+      "buttons": {
+        "contacto": "Ir a contacto",
+        "servicios": "Ver servicios"
+      }
+    }
+  },
+
+  "contacto": {
+    "meta": {
+      "title": "Contacto · Gema Mascaraque Psicología",
+      "description": "Contacta con Gema Mascaraque Psicología. Llámame o escríbeme y reserva tu cita, presencial en Alcalá de Henares u online."
+    },
+    "eyebrow": "Contacto",
+    "title": "Hablemos",
+    "intro": "Llámame o escríbeme para pedir más información:",
+    "labels": {
+      "telefono": "Teléfono",
+      "whatsapp": "WhatsApp",
+      "correo": "Correo"
+    },
+    "reservaText": "O reserva directamente tu cita:",
+    "buttons": {
+      "presencial": "Reservar presencial",
+      "online": "Reservar online"
+    },
+    "imageAlt": "Gema Mascaraque atendiendo por teléfono"
+  }
+}

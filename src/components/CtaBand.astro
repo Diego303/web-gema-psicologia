@@ -1,0 +1,21 @@
+---
+interface CtaButton {
+  href: string;
+  label: string;
+  /** Variante de botón: 'btn-light' (claro) o 'btn-out' (contorno). */
+  class: string;
+}
+interface Props {
+  title: string;
+  text: string;
+  buttons: CtaButton[];
+}
+const { title, text, buttons } = Astro.props;
+---
+<div class="ctaband reveal">
+  <h2>{title}</h2>
+  <p>{text}</p>
+  <div class="cta-row">{buttons.map((b) => (
+    <a href={b.href} class:list={['btn', b.class]}>{b.label}</a>
+  ))}</div>
+</div>

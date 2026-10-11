@@ -3,7 +3,8 @@
 Sitio estático de 4 páginas (Inicio, Servicios, Sobre mí, Contacto) construido con
 **Astro** y desplegado en **GitHub Pages** mediante GitHub Actions.
 
-- Diseño sereno (loto + ondas, hero con cielo/sol/nubes, fundidos de imagen, reveal-on-scroll).
+- Diseño sereno: hero con un loto realista animado (WebGL), verde menta como color de
+  marca, títulos en negro, fundidos de imagen y reveal-on-scroll.
 - Sin frameworks de UI, sin Tailwind: CSS propio en `src/styles/global.css`.
 - Imágenes optimizadas con `astro:assets`.
 - Navegación MPA clásica (sin View Transitions), para que las animaciones se
@@ -13,8 +14,10 @@ Sitio estático de 4 páginas (Inicio, Servicios, Sobre mí, Contacto) construid
 
 ## ✅ Requisitos
 
-- **Node 20+**
-- **pnpm** (gestor de paquetes usado en este proyecto)
+- **Node 24** (la misma versión que usa el CI)
+- **pnpm 12.6.0**: la versión está fijada en `packageManager` (`package.json`) y el
+  CI usa esa misma. Los ajustes de pnpm (scripts de instalación permitidos y
+  hoisting de `sharp`) están en `pnpm-workspace.yaml`.
 
 ## 🧞 Comandos
 
@@ -43,29 +46,34 @@ falta tocar el código de las páginas.
 Está organizado por secciones:
 
 - **`global`** → datos del negocio compartidos por toda la web: `brand`, `name`,
-  `role`, `colegiada`, `phone`, `whatsapp`, `email`, `location`, `online`, los
-  **enlaces de reserva** (`booking.presencial` / `booking.online`) y el menú (`nav`).
+  `role`, `colegiada`, `phone`, `whatsapp`, `email`, la **reserva** (`booking`) y
+  el menú (`nav`).
 - **`inicio`** → `meta` (SEO), `hero` (título/subtítulo) y `welcome` (bienvenida).
-- **`servicios`** → `meta`, `head` (intro + chips), `blocks` (los 5 servicios con
-  su lista de ítems) y `cta`.
+- **`servicios`** → `meta`, `head` (intro), `blocks` (los 5 servicios con su lista
+  de ítems) y `cta`.
 - **`sobre`** → `meta`, `head`, `intro`, `formacion`, `philo` (cita), `experiencia` y `cta`.
-- **`contacto`** → `meta`, textos, etiquetas de los datos y botones.
+- **`contacto`** → `meta`, textos y etiquetas de los datos.
 
 ```jsonc
 "global": {
-  "colegiada": "...",          // ← nº de colegiada real
-  "phone": "+34 600 00 00 00", // ← teléfono para llamadas
-  "whatsapp": "+34 600 00 00 00", // ← número de WhatsApp
-  "email": "hola@tudominio.com",  // ← email real
+  "colegiada": "...",   // ← nº de colegiada
+  "phone": "...",       // ← teléfono para llamadas
+  "whatsapp": "...",    // ← número de WhatsApp
+  "email": "...",
   "booking": {
-    "presencial": "#",  // ← enlace de reserva presencial (Doctoralia, Calendly…)
-    "online": "#"       // ← enlace de reserva online
+    "url": "https://...",  // ← enlace de reserva (Doctoralia, Calendly…)
+    "button": "Reservar",  // ← texto del botón
+    "modes": [             // ← modalidades, mostradas como texto junto al botón
+      { "label": "Presencial", "text": "Alcalá de Henares (Madrid)" },
+      { "label": "Online", "text": "Desde cualquier parte" }
+    ]
   }
 }
 ```
 
-> Rellena con datos reales: `phone`, `whatsapp`, `email` y
-> `booking.presencial` / `booking.online` (ahora son valores de ejemplo).
+La reserva se muestra con el componente `Booking` (modalidades en texto + un único
+botón «Reservar») en Servicios y Contacto; la banda final de Servicios usa el mismo
+enlace y texto de botón.
 
 ### Nota técnica
 Las páginas leen el JSON directamente; `src/data/site.ts` y `src/data/services.ts`
@@ -105,6 +113,24 @@ gris con silueta en lugar de una foto.
 
 ---
 
+## 🪷 Loto animado del inicio
+
+El fondo del hero de la página de inicio es una animación WebGL (loto, ondas en el
+agua y nubes) que vive en `public/lotus/`:
+
+- `public/lotus/index.html` → página de la animación (se incrusta como `<iframe>` en
+  `src/components/Hero.astro`).
+- `public/lotus/assets/lotus.png` → imagen base. Para más nitidez, sustitúyela por una
+  versión 4K **con el mismo encuadre** (mismo nombre).
+
+La animación recorta el encuadre para que el loto quede siempre centrado (PC y
+móvil), baja la calidad sola en móviles lentos, se pausa cuando la pestaña está oculta
+o el hero sale de pantalla, y muestra una imagen fija con «reducir movimiento». Debe
+servirse desde un servidor (`pnpm dev` / `pnpm preview` / GitHub Pages): abierta con
+doble clic como archivo puede no cargar.
+
+---
+
 ## 🚀 Despliegue en GitHub Pages
 
 El repositorio incluye el workflow `.github/workflows/deploy.yml` (acción oficial
@@ -114,8 +140,9 @@ El repositorio incluye el workflow `.github/workflows/deploy.yml` (acción ofici
 2. Haz `push` a la rama `main`. El workflow construye y publica automáticamente.
 3. La web quedará en `https://Diego303.github.io/web-gema-psicologia/`.
 
-> Recomendado: ejecuta `pnpm install` una vez y **commitea el `pnpm-lock.yaml`**
-> para que la build de CI sea reproducible.
+> La build del CI es reproducible: instala con el `pnpm-lock.yaml` commiteado y con
+> la versión de pnpm de `packageManager`. Si actualizas pnpm en local, cambia
+> también ese campo (y commitea el lockfile si se modifica).
 
 ### Configuración de rutas (`astro.config.mjs`)
 ```js
@@ -136,12 +163,13 @@ Si algún día renombras el repositorio o lo conviertes en sitio de usuario
 ├─ astro.config.mjs          # site + base (GitHub Pages) + sitemap
 ├─ .github/workflows/deploy.yml
 ├─ public/favicon.png        # icono/logo de la web (loto + GM)
+├─ public/lotus/             # animación WebGL del loto (hero de inicio)
 └─ src/
-   ├─ assets/                # consulta.jpg, emocional.jpg, alimentario.jpg
-   ├─ data/                  # site.ts, services.ts  ← edita aquí
+   ├─ assets/                # fotos (las optimiza astro:assets)
+   ├─ data/                  # content.json ← edita aquí · site.ts, services.ts (derivan)
    ├─ lib/                   # url.ts (rutas con base), img.ts (widths)
-   ├─ styles/global.css      # TODO el CSS del diseño original
-   ├─ components/            # Header, Footer, Hero, Frame, WorkBlock, Philo, CtaBand, ...
+   ├─ styles/global.css      # todo el CSS (paleta menta en :root)
+   ├─ components/            # Header, Footer, Hero, Booking, Frame, WorkBlock, Philo, CtaBand, ...
    ├─ layouts/Base.astro     # <head>, header, footer y scripts de cliente
    └─ pages/                 # index, servicios, sobre-mi, contacto
 ```

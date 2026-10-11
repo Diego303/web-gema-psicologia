@@ -17,10 +17,8 @@ export const site = {
   phone: g.phone,
   whatsapp: g.whatsapp,
   email: g.email,
-  location: g.location,
-  online: g.online,
-  bookingPresencial: g.booking.presencial,
-  bookingOnline: g.booking.online,
+  /** Reserva: enlace único, texto del botón y modalidades (presencial / online) en texto. */
+  booking: g.booking,
   nav: g.nav.map((n) => ({ href: url(n.path), label: n.label, key: n.key })),
 };
 

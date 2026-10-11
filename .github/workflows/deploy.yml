@@ -23,13 +23,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Build con Astro
         # withastro/action detecta el proyecto, instala dependencias,
         # hace `build` y sube el artefacto de Pages automáticamente.
-        uses: withastro/action@v3
+        # pnpm: detectado por pnpm-lock.yaml; la versión se toma del campo
+        # `packageManager` de package.json (la misma que en local). No añadas
+        # `package-manager: pnpm@X` aquí o habría dos versiones distintas.
+        uses: withastro/action@v6
         with:
-          package-manager: pnpm@9
+          node-version: 24
 
   deploy:
     needs: build
@@ -40,4 +43,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Frame from '../components/Frame.astro';
+import Booking from '../components/Booking.astro';
 import { site } from '../data/site';
 import content from '../data/content.json';
 import contactoFoto from '../assets/contacto.jpg';
@@ -18,10 +19,7 @@ const c = content.contacto;
       <p>{c.reservaText}</p>
       <div class="reserva-row">
         <svg class="doctoralia-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" fill="none" role="img" aria-label="Reserva en Doctoralia"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.98845 14.0001L18.7787 17.7256L20.1409 1.5H29.8219L31.0519 16.1736C25.4972 18.0825 22.2305 19.6074 18.4877 21.913C15.7246 23.6108 13.2118 25.5977 10.9634 27.8762L0 23.2386L2.98845 14.0001ZM35.5723 49.1948L27.7179 40.0475C28.9209 37.0919 32.3056 32.9559 35.758 30.8222L43.4018 43.4946L35.5723 49.1948ZM16.4268 49.181C22.8808 35.9916 35.2075 26.2218 49.9783 23.3065L46.9766 14.0414C29.0561 16.0691 13.8091 26.9524 5.64951 42.2353L16.4268 49.181Z" fill="#00C3A5"/></svg>
-        <div class="cta-row cta-col">
-          <a href={site.bookingPresencial} class="btn btn-primary">{c.buttons.presencial}</a>
-          <a href={site.bookingOnline} class="btn btn-ghost">{c.buttons.online}</a>
-        </div>
+        <Booking align="start" />
       </div>
     </div>
     <Frame class="photo reveal" image={contactoFoto} alt={c.imageAlt} />

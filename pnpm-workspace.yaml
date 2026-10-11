@@ -1,0 +1,13 @@
+# Ajustes de pnpm (la versión se fija en `packageManager` de package.json y la usa también el CI).
+# pnpm ≥ 11 ya no lee estos ajustes de .npmrc: van aquí.
+allowBuilds:
+  # Ni esbuild ni sharp necesitan su script de instalación: sus binarios vienen precompilados en
+  # @esbuild/<plataforma> y @img/sharp-<plataforma>. Además, en /mnt/d (WSL) ejecutarlos hace fallar
+  # pnpm con "failed to rename staging directory ... Permission denied".
+  esbuild: false
+  sharp: false
+# Sube sharp y sus binarios al node_modules raíz para que astro:assets lo encuentre al optimizar
+# las imágenes (sin esto: error "MissingSharp / Could not find Sharp").
+publicHoistPattern:
+  - '*sharp*'
+  - '@img/*'

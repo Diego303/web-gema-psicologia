@@ -1,0 +1,15 @@
+---
+// Bloque de reserva: las modalidades (presencial / online) escritas en texto y un
+// único botón "Reservar". Textos y enlace en content.json → global.booking.
+import { site } from '../data/site';
+
+interface Props {
+  /** 'center' (cabeceras centradas, por defecto) o 'start' (alineado a la izquierda). */
+  align?: 'center' | 'start';
+}
+const { align = 'center' } = Astro.props;
+---
+<div class:list={['booking', align === 'start' && 'booking-start']}>
+  <ul class="modes">{site.booking.modes.map((m) => <li><b>{m.label}</b> · {m.text}</li>)}</ul>
+  <a href={site.booking.url} class="btn btn-primary">{site.booking.button}</a>
+</div>

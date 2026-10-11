@@ -2,21 +2,18 @@
 import Base from '../layouts/Base.astro';
 import WorkBlock from '../components/WorkBlock.astro';
 import CtaBand from '../components/CtaBand.astro';
+import Booking from '../components/Booking.astro';
 import { site } from '../data/site';
 import { services } from '../data/services';
 import content from '../data/content.json';
 const c = content.servicios;
 ---
 <Base title={c.meta.title} description={c.meta.description} current="servicios">
-  <section class="page-head lead"><div class="wrap">
+  <section class="page-head"><div class="wrap">
     <span class="eyebrow">{c.head.eyebrow}</span>
     <h1>{c.head.title} <span>{c.head.titleAccent}</span></h1>
     <p>{c.head.intro}</p>
-    <div class="cta-row">
-      <a href={site.bookingPresencial} class="btn btn-primary">{c.head.buttons.presencial}</a>
-      <a href={site.bookingOnline} class="btn btn-ghost">{c.head.buttons.online}</a>
-    </div>
-    <div class="chips"><span class="chip"><b>{c.head.chips.presencial}</b> · {site.location}</span><span class="chip"><b>{c.head.chips.online}</b> · {site.online}</span></div>
+    <Booking />
   </div></section>
 
   <section class="work"><div class="wrap">
@@ -29,10 +26,7 @@ const c = content.servicios;
     <CtaBand
       title={c.cta.title}
       text={c.cta.text}
-      buttons={[
-        { href: site.bookingPresencial, label: c.cta.buttons.presencial, class: 'btn-light' },
-        { href: site.bookingOnline, label: c.cta.buttons.online, class: 'btn-out' },
-      ]}
+      buttons={[{ href: site.booking.url, label: site.booking.button, class: 'btn-primary' }]}
     />
   </div></section>
 </Base>

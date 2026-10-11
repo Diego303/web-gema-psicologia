@@ -1,23 +1,17 @@
 ---
 import { site } from '../data/site';
 import content from '../data/content.json';
+import { url } from '../lib/url';
 const c = content.inicio.hero;
 ---
 <section class="hero">
-  <div class="hero-bg"></div><div class="dawn"></div>
-  <div class="clouds">
-    <span class="cloud" style="left:9%;top:11%;width:300px;height:74px;opacity:.5;animation-duration:46s"></span>
-    <span class="cloud" style="left:31%;top:6%;width:380px;height:84px;opacity:.6;animation-duration:58s"></span>
-    <span class="cloud" style="left:57%;top:13%;width:330px;height:76px;opacity:.52;animation-duration:50s"></span>
-    <span class="cloud" style="left:75%;top:7%;width:300px;height:70px;opacity:.48;animation-duration:64s"></span>
-    <span class="cloud" style="left:44%;top:24%;width:440px;height:62px;opacity:.32;animation-duration:54s"></span>
-  </div>
-  <div class="hills"></div>
-  <div class="mist"></div><div class="hzline"></div>
+  <!-- Loto realista animado (WebGL) servido desde public/lotus/. Va en un iframe para
+       aislar su script y su CSS; dentro, el encuadre se recorta para dejar siempre
+       el loto centrado (en PC y en móvil). -->
+  <iframe class="lotus-bg" src={url('lotus/index.html')} title="Flor de loto sobre el agua" aria-hidden="true" tabindex="-1"></iframe>
   <div class="wrap hero-inner"><div class="hero-text">
-    <h1>{site.name}<span>{c.titleAccent}</span></h1>
+    <h1>{site.name} <span>{c.titleAccent}</span></h1>
     <p class="sub">{c.subtitle}</p>
   </div></div>
-  <div class="water-stage"><div class="ripples"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div><svg class="lotus" viewBox="0 0 200 150"><use href="#lotus-shape"/></svg></div>
-  <svg class="wave-bottom" viewBox="0 0 1440 90" preserveAspectRatio="none" width="100%" height="90"><path d="M0,40 C240,80 480,80 720,52 C960,24 1200,24 1440,52 L1440,90 L0,90 Z" fill="#E8EEF0"/></svg>
+  <svg class="wave-bottom" viewBox="0 0 1440 90" preserveAspectRatio="none" width="100%" height="90" aria-hidden="true"><path d="M0,40 C240,80 480,80 720,52 C960,24 1200,24 1440,52 L1440,90 L0,90 Z"/></svg>
 </section>

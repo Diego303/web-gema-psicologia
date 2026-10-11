@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Loto — fondo animado</title>
+<!-- Página auxiliar: se incrusta como iframe en el hero de la home (src/components/Hero.astro). No indexar. -->
+<meta name="robots" content="noindex">
+
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#8fb0b0 url(assets/lotus.png) 50% 53%/cover no-repeat}
+  canvas{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;display:block;opacity:0;transition:opacity 1.4s ease}
+  canvas.on{opacity:1}
+</style>
+</head>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+<script>
+(() => {
+const LOOP = 24;                 // s — every motion term is an integer multiple of this period → seamless loop
+const SRC = 'assets/lotus.png';  // swap for a 4K render with the same framing for true 4K output
+const MAX_W = 3840;
+const canvas = document.getElementById('c');
+const gl = canvas.getContext('webgl', {antialias:false, alpha:false, preserveDrawingBuffer:true, powerPreference:'high-performance'});
+if (!gl) { canvas.remove(); return; }
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); canvas.remove(); });
+
+const vs = `attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
+const fs = `
+precision highp float;
+uniform sampler2D img, soft;
+uniform vec2 res, texSize;
+uniform float t, t2, upscale;
+const float TAU = 6.28318530718;
+const float H  = 0.435;             // horizon
+const vec2  B  = vec2(0.5, 0.606);  // lotus waterline / ripple origin
+const float HP = -0.30;             // water-plane vanishing line fitted to the plate's ring ellipses
+const float SY = 3.45;
+float IA;
+
+float hash(vec2 p){p=fract(p*vec2(443.897,441.423));p+=dot(p,p.yx+19.19);return fract((p.x+p.y)*p.x);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise(p);p=mat2(1.6,1.2,-1.2,1.6)*p+vec2(1.7,9.2);a*=.5;}return v;}
+float hash3(vec3 p){p=fract(p*0.3183099+0.1);p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
+float noise3(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.-2.*f);
+  return mix(mix(mix(hash3(i),hash3(i+vec3(1,0,0)),f.x),mix(hash3(i+vec3(0,1,0)),hash3(i+vec3(1,1,0)),f.x),f.y),
+             mix(mix(hash3(i+vec3(0,0,1)),hash3(i+vec3(1,0,1)),f.x),mix(hash3(i+vec3(0,1,1)),hash3(i+vec3(1,1,1)),f.x),f.y),f.z);}
+float fbm3(vec3 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*noise3(p);p=p*2.03+vec3(3.1,1.7,5.3);a*=.5;}return v;}
+mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+
+float wmMask(vec2 uv){ return 1.0 - smoothstep(0.035, 0.06, length((uv-vec2(0.9586,0.927))*vec2(IA,1.0))); }
+
+// Catmull-Rom bicubic (9 bilinear taps) — crisp upscaling of the plate
+vec3 bicubic(vec2 uv){
+  vec2 sp = uv*texSize, tp = floor(sp-0.5)+0.5, f = sp-tp;
+  vec2 w0 = f*(-0.5+f*(1.0-0.5*f)), w1 = 1.0+f*f*(-2.5+1.5*f), w2 = f*(0.5+f*(2.0-1.5*f)), w3 = f*f*(-0.5+0.5*f);
+  vec2 w12 = w1+w2, o12 = w2/w12;
+  vec2 a = (tp-1.0)/texSize, b = (tp+o12)/texSize, c = (tp+2.0)/texSize;
+  vec3 r = (texture2D(img,vec2(a.x,a.y)).rgb*w0.x + texture2D(img,vec2(b.x,a.y)).rgb*w12.x + texture2D(img,vec2(c.x,a.y)).rgb*w3.x)*w0.y
+         + (texture2D(img,vec2(a.x,b.y)).rgb*w0.x + texture2D(img,vec2(b.x,b.y)).rgb*w12.x + texture2D(img,vec2(c.x,b.y)).rgb*w3.x)*w12.y
+         + (texture2D(img,vec2(a.x,c.y)).rgb*w0.x + texture2D(img,vec2(b.x,c.y)).rgb*w12.x + texture2D(img,vec2(c.x,c.y)).rgb*w3.x)*w3.y;
+  return max(r, 0.0);
+}
+vec3 plate(vec2 uv){
+  uv = clamp(uv, 1.5/texSize, 1.0-1.5/texSize);
+  float m = wmMask(uv);
+  return m > 0.0 ? mix(bicubic(uv), bicubic(uv-vec2(0.075,0.0)), m) : bicubic(uv);
+}
+vec3 fast(vec2 uv){ return texture2D(img, clamp(uv,0.0,1.0)).rgb; }
+vec3 low(vec2 uv){ uv = clamp(uv,0.0,1.0); float m = 1.0-smoothstep(0.03,0.075,length((uv-vec2(0.9586,0.927))*vec2(IA,1.0)));
+  return mix(texture2D(soft,uv).rgb, texture2D(soft,uv-vec2(0.075,0.0)).rgb, m); }
+
+// dew bead on a petal: inverted refraction, dark rim, specular, caustic, contact shadow (source-px space)
+vec3 bead(vec3 col, vec2 P, vec2 Cd, float r, float st, float aa){
+  if (r < 0.25) return col;
+  vec2 dp = (P-Cd)/r; dp.y *= 1.15/st;
+  float rr = dot(dp,dp), rl = sqrt(rr);
+  float inside = 1.0 - smoothstep(1.0-aa, 1.0+aa, rl);
+  vec2 so = dp - vec2(0.25,0.35);
+  col *= 1.0 - exp(-dot(so,so)*1.4)*0.22*(1.0-inside);
+  if (inside > 0.0) {
+    vec3 refr = fast((Cd - (P-Cd)*0.6)/texSize);
+    float rim = smoothstep(0.25, 1.0, rr);
+    vec3 dc = refr*mix(1.04, 0.66, rim)*vec3(0.95,0.985,1.0);
+    vec2 hs = dp - vec2(-0.34,-0.42);
+    dc += vec3(1.0)*exp(-dot(hs,hs)*22.0)*1.0;
+    vec2 c2 = dp - vec2(0.24,0.52);
+    dc += vec3(1.0,0.95,0.84)*exp(-dot(c2,c2)*9.0)*0.30;
+    col = mix(col, dc, inside);
+  }
+  return col;
+}
+float segD(vec2 p, vec2 a, vec2 b, out float u){ vec2 ab=b-a; u=clamp(dot(p-a,ab)/dot(ab,ab),0.0,1.0); return length(p-a-ab*u); }
+
+void main(){
+  IA = texSize.x/texSize.y;
+  float tau = t*TAU;
+  vec2 cs = vec2(cos(tau), sin(tau));
+  vec2 p = gl_FragCoord.xy/res; p.y = 1.0-p.y;
+  float A = res.x/res.y;
+  vec2 s = A > IA ? vec2(1.0, IA/A) : vec2(A/IA, 1.0);
+  vec2 focus = vec2(0.5, A > IA ? 0.53 : 0.5);
+  vec2 q = rot(0.0016*sin(tau))*((p-0.5)*vec2(A,1.0));        // barely-there camera tilt
+  p = q/vec2(A,1.0)+0.5;
+  vec2 uv = focus + (p-0.5)*s/1.02 + vec2(0.0008*sin(tau*2.0+0.4), 0.0012*sin(tau+1.3));
+
+  float water = smoothstep(H-0.004, H+0.03, uv.y);
+  float sky   = 1.0 - smoothstep(0.30, 0.345, uv.y);
+
+  // ---- lotus floats: gentle bob, rock and breath; reflection moves in mirror ----
+  // dew drip: every 12 s a bead forms at a petal tip, slides down leaving a wet trail, drips into the water
+  float te = fract(t*2.0)*12.0;
+  float ev = mod(floor(t*2.0), 2.0);
+  vec2 dTip  = ev < 0.5 ? vec2(645.0,353.0) : vec2(607.0,359.0);
+  vec2 dBase = ev < 0.5 ? vec2(649.0,418.0) : vec2(613.0,414.0);
+  float slide = clamp((te-2.6)/3.2, 0.0, 1.0);
+  float su = slide*slide*(1.6-0.6*slide) + 0.012*sin(te*11.0)*step(0.01,slide)*(1.0-slide);   // stick-slip
+  float tOff = te - 5.8;                          // drip leaves the petal
+  float kick = step(0.0,tOff)*exp(-tOff*1.8)*sin(tOff*6.0);
+  // turn to one side (≈3.5°), dwell, return — eased, plus float
+  float c0 = 0.5-0.5*cos(tau);
+  float turn = c0*c0*(3.0-2.0*c0);
+  float bob   = 0.0038*sin(tau*4.0) - 0.0012*kick;
+  float sway  = 0.006*sin(tau*2.0+1.0) - 0.004*turn;
+  float rock  = 0.062*turn - 0.022 + 0.012*sin(tau*3.0+0.8) + 0.004*kick;
+  float yaw   = sin(tau+0.9);                    // slow turn around the stem
+  float sx    = 1.0 + 0.07*yaw;
+  float shear = 0.055*cos(tau+0.9);
+  float br    = 1.0 + 0.005*sin(tau*4.0+2.0);    // petals breathe with the bob
+  vec2 v  = (uv-B)*vec2(IA,1.0);
+  vec2 vf = rot(rock)*(v+vec2(sway,bob))/br;  vf.x = vf.x/sx + shear*vf.y; vf.x += 0.10*yaw*vf.x*abs(vf.x)/0.16;
+  vec2 vr = rot(-rock)*(v+vec2(sway,-bob))/br; vr.x = vr.x/sx - shear*vr.y; vr.x += 0.10*yaw*vr.x*abs(vr.x)/0.16;
+  vec2 fl = B + vf/vec2(IA,1.0);
+  vec2 rf = B + vr/vec2(IA,1.0);
+  float wF = (1.0-smoothstep(1.1,1.85,length((uv-vec2(0.5,0.535))/vec2(0.088,0.092)))) * (1.0-smoothstep(0.604,0.616,uv.y));
+  float wR = smoothstep(0.604,0.616,uv.y)*(1.0-smoothstep(0.74,0.80,uv.y))*(1.0-smoothstep(0.08,0.125,abs(uv.x-0.5)));
+  vec2 uvL = uv + (fl-uv)*wF + (rf-uv)*wR;
+
+  // ---- travelling ripples on a perspective water plane ----
+  vec2 disp = vec2(0.0); float shade = 0.0, crest = 0.0, erase = 0.0;
+  if (water > 0.0) {
+    float z = uv.y-HP, z0 = B.y-HP;
+    vec2 g = vec2((uv.x-B.x)*IA/z, SY/z-SY/z0);
+    float d = length(g);
+    vec2 dir = g/max(d,1e-4);
+    float ph  = d*105.0 - tau*12.0;                                // a ring every 2 s
+    float env = 0.3 + 0.7*pow(0.5+0.5*sin(d*7.0 - tau*3.0), 2.0);  // pulse trains
+    float fall = exp(-d*2.0)*smoothstep(0.12,0.22,d);
+    float h  = sin(ph)*env*fall, dh = cos(ph)*env*fall;
+    float ph2 = d*168.0 - tau*16.0, f2 = exp(-d*3.5)*smoothstep(0.12,0.2,d)*0.35;
+    h += sin(ph2)*f2; dh += cos(ph2)*f2;
+    float front = 0.2 + max(tOff,0.0)*0.07;                        // drip ring
+    float ip = step(0.0,tOff)*exp(-pow((d-front)/0.045,2.0))*exp(-max(tOff,0.0)*0.5)*0.7;
+    h += sin((d-front)*150.0)*ip; dh += cos((d-front)*150.0)*ip;
+    vec2 wg = g*vec2(10.0,16.0);                                   // breeze capillaries
+    vec2 wgrad = vec2(fbm(wg+cs*0.9)-0.5, fbm(wg*1.7-cs*0.6+5.2)-0.5)*0.35*smoothstep(0.1,0.6,d);
+    vec2 G = dir*dh + wgrad;
+    float m = water*(1.0-wF);
+    disp  = vec2(G.x*z/IA, -G.y*z*z/SY)*0.016*m;
+    shade = (G.y*0.85 + G.x*0.35)*m;
+    crest = h*m;
+    erase = 0.5*smoothstep(0.22,0.38,d)*(1.0-wR)*water;           // fade baked static rings
+  }
+  vec2 suv = uvL + disp;
+
+  // ---- plate + drifting clouds (looping flow, contrast-preserving blend) ----
+  vec3 col;
+  if (sky > 0.0) {
+    float par = mix(1.0, 0.3, smoothstep(0.0, 0.34, uv.y));      // high clouds move faster
+    vec2 fd = vec2(1.0,0.05)*0.05*par;
+    float a1 = fract(t*4.0), a2 = fract(t*4.0+0.5);
+    float k1 = 1.0-abs(2.0*a1-1.0);
+    vec2 wp = uv*vec2(2.4,6.0);
+    vec2 warp = (vec2(fbm(wp+cs*0.35), fbm(wp-cs*0.35+4.1))-0.5)*vec2(0.008,0.003)*par;
+    vec3 c1 = plate(suv - fd*(a1-0.5) + warp);
+    vec3 c2 = plate(suv - fd*(a2-0.5) + warp);
+    vec3 mean = low(suv);
+    vec3 cl = mean + (mix(c2,c1,k1)-mean)/sqrt(k1*k1+(1.0-k1)*(1.0-k1));
+    col = sky < 0.999 ? mix(plate(suv), cl, sky) : cl;
+    // drifting soft cloud veils — seamless cylinder noise, crosses the frame left → right
+    float th = TAU*(uv.x - t2);
+    vec3 P = vec3(cos(th)*1.25, sin(th)*1.25, uv.y*8.0 + 0.25*sin(tau));
+    float dv = fbm3(P + vec3(warp*40.0, 0.0));
+    float dens = smoothstep(0.46, 0.78, dv);
+    float shadow = smoothstep(0.40, 0.80, noise3(P*1.6 + vec3(0.0,0.0,-0.6)));
+    float vm = sky*smoothstep(0.02,0.14,uv.y)*(1.0-smoothstep(0.24,0.33,uv.y));
+    col = mix(col, col*vec3(0.94,0.95,0.97), (shadow-dens*0.6)*0.12*vm);
+    col = mix(col, vec3(1.0,0.975,0.95), dens*0.24*vm);
+  } else col = plate(suv);
+
+  // edge-aware sharpening (halo-clamped), scaled to the upscale factor
+  float sw = (1.0-sky)*(1.0-wmMask(suv));
+  if (sw > 0.0) {
+    vec2 px = 1.0/texSize;
+    vec3 n1=fast(suv+vec2(px.x,0.)), n2=fast(suv-vec2(px.x,0.)), n3=fast(suv+vec2(0.,px.y)), n4=fast(suv-vec2(0.,px.y));
+    vec3 mn = min(min(n1,n2),min(n3,n4)), mx = max(max(n1,n2),max(n3,n4));
+    float amt = (clamp(0.3+(upscale-1.0)*0.45, 0.3, 0.85) + 0.35*wF)*sw;
+    col = clamp(col + (col-(n1+n2+n3+n4)*0.25)*amt, min(mn,col), max(mx,col));
+  }
+
+  // ---- lotus: extra clarity + dew that rides with the flower ----
+  if (wF > 0.01) {
+    vec2 q2 = 2.2/texSize;
+    vec3 a2 = (fast(fl+vec2(q2.x,0.))+fast(fl-vec2(q2.x,0.))+fast(fl+vec2(0.,q2.y))+fast(fl-vec2(0.,q2.y)))*0.25;
+    float wk = wF*(1.0-wR);
+    col += (col-a2)*0.26*wk;                                     // mid-frequency petal definition
+    col = mix(col, col*col*(3.0-2.0*col), 0.16*wk);
+    vec2 P = fl*texSize;
+    float aa = 1.3/max(upscale,1.0);
+    vec3 cb = col;
+    // wet trail
+    float tu; float td = segD(P, dTip, mix(dTip,dBase,su), tu);
+    float age = te - (2.6 + 3.2*tu);
+    float tr = (1.0-smoothstep(0.5,1.5,td))*step(2.6,te)*(1.0-smoothstep(1.0,7.5,age));
+    cb = mix(cb, cb*vec3(0.90,0.925,0.94), tr*0.55);
+    cb += vec3(1.0)*(1.0-smoothstep(0.0,0.45,abs(td-0.8)))*tr*0.10;
+    // resting dew
+    cb = bead(cb, P, vec2(626.0,394.0), 2.4, 1.0, aa/2.4);
+    cb = bead(cb, P, vec2(677.0,371.0), 1.9, 1.0, aa/1.9);
+    cb = bead(cb, P, vec2(694.0,392.0), 1.5, 1.0, aa/1.5);
+    // travelling bead: grows at tip, elongates as it slides, gone when it drips
+    float r3 = 2.6*smoothstep(0.2,2.4,te)*(1.0-smoothstep(5.6,5.85,te));
+    cb = bead(cb, P, mix(dTip,dBase,su), r3, 1.0+0.45*smoothstep(0.0,0.2,slide)*(1.0-slide*0.5), aa/max(r3,0.5));
+    col = mix(col, cb, smoothstep(0.6,0.95,wF));
+  }
+
+  // ---- water lighting from the height field ----
+  col = mix(col, low(suv), erase);
+  vec3 skyRefl = low(vec2(suv.x, H-(suv.y-H)*0.5-0.03));
+  float fres = mix(0.45, 1.0, smoothstep(1.0, H, uv.y));
+  col = mix(col, skyRefl*1.03, clamp(shade,0.0,1.0)*0.42*fres);
+  col = mix(col, col*vec3(0.78,0.88,0.90), clamp(-shade,0.0,1.0)*0.40);
+  float sunSide = 1.0-smoothstep(0.2,0.8,uv.x);
+  col += vec3(1.0,0.94,0.82)*pow(max(crest,0.0),5.0)*(0.06+0.08*sunSide)*water;
+
+  // breathing horizon mist
+  float band = exp(-pow((uv.y-H)/0.05, 2.0));
+  if (band > 0.01) {
+    float mist = fbm(vec2(uv.x*3.0+0.04*sin(tau), uv.y*11.0) + cs*0.4);
+    col = mix(col, vec3(0.90,0.925,0.93), band*smoothstep(0.35,0.8,mist)*0.18);
+  }
+
+  // grade: gentle clarity curve, soft vignette, dither
+  col = mix(col, col*col*(3.0-2.0*col), 0.14);
+  vec2 vg = (p-0.5)*vec2(1.0,1.2); col *= 1.0 - dot(vg,vg)*0.18;
+  col += (hash(gl_FragCoord.xy + fract(t*97.0)*311.0)-0.5)*(2.0/255.0);
+  gl_FragColor = vec4(col,1.0);
+}`;
+
+function sh(type, src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);
+  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(s));return s;}
+const prog = gl.createProgram();
+gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs));
+gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
+gl.linkProgram(prog); gl.useProgram(prog);
+gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,3,-1,-1,3]), gl.STATIC_DRAW);
+const loc = gl.getAttribLocation(prog,'p'); gl.enableVertexAttribArray(loc);
+gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+const U = n => gl.getUniformLocation(prog, n);
+const uRes=U('res'), uT=U('t'), uT2=U('t2'), uTex=U('texSize'), uUp=U('upscale');
+gl.uniform1i(U('img'), 0); gl.uniform1i(U('soft'), 1);
+
+let quality = 1, texW = 1280, texH = 714;
+function resize(){
+  const dpr = window.devicePixelRatio || 1;
+  const w = window.innerWidth, h = window.innerHeight;
+  const pr = Math.max(1, Math.min(dpr, 2.5)*quality);   // never drop below CSS resolution
+  let pw = w*pr, ph = h*pr;
+  if (pw > MAX_W) { ph *= MAX_W/pw; pw = MAX_W; }
+  canvas.width = Math.round(pw); canvas.height = Math.round(ph);
+  gl.viewport(0,0,canvas.width,canvas.height);
+  const A = pw/ph, IA = texW/texH;
+  const visW = (A > IA ? texW : texH*A)/1.02;
+  gl.uniform1f(uUp, canvas.width/visW);
+  gl.uniform2f(uRes, canvas.width, canvas.height);
+}
+new ResizeObserver(resize).observe(document.documentElement);
+
+function makeTex(unit, src){
+  gl.activeTexture(gl.TEXTURE0+unit);
+  gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,src);
+  [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE));
+  [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.LINEAR));
+}
+
+const img = new Image();
+img.onload = () => {
+  const max = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+  let src = img; texW = img.naturalWidth; texH = img.naturalHeight;
+  if (texW > max) { const c = document.createElement('canvas'); c.width = max; c.height = Math.round(texH*max/texW);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height); src = c; texW = c.width; texH = c.height; }
+  makeTex(0, src);
+  // anisotropic low-pass plate (wider than tall, like ripples) — used to fade baked rings & for rough reflections
+  const lw = Math.round(texW/4), lh = Math.round(texH/2);
+  const lc = document.createElement('canvas'); lc.width = lw; lc.height = lh;
+  const x = lc.getContext('2d');
+  x.drawImage(src,0,0,lw,lh); x.filter = 'blur(4px)'; x.drawImage(src,0,0,lw,lh);
+  makeTex(1, lc);
+  gl.uniform2f(uTex, texW, texH);
+  resize();
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // localStorage puede lanzar si el navegador bloquea el almacenamiento: sin él, simplemente no se recuerda el instante.
+  const store = { get(){ try { return parseFloat(localStorage.getItem('lotus-t'))||0; } catch { return 0; } },
+                  set(v){ try { localStorage.setItem('lotus-t', v); } catch {} } };
+  const t0 = performance.now() - store.get()*1000;
+  let last = 0, save = 0, acc = 0, n = 0, running = true, raf = 0, inView = true;
+  const draw = sec => { gl.uniform1f(uT, (sec%LOOP)/LOOP); gl.uniform1f(uT2, sec/(LOOP*4)); gl.drawArrays(gl.TRIANGLES,0,3); };
+  const frame = now => {
+    if (!running) return;
+    const sec = ((now-t0)/1000) % (LOOP*4);   // full cycle 96 s (clouds), 24 s (water, lotus)
+    draw(sec);
+    if (last) { acc += now-last; n++; }
+    last = now;
+    if (n === 60) { const avg = acc/n; acc = n = 0;
+      if (avg > 24 && quality > 0.6) { quality = Math.max(0.6, quality*0.88); resize(); }
+      else if (avg < 15 && quality < 1) { quality = Math.min(1, quality*1.08); resize(); } }
+    if (now-save > 1000) { store.set(sec.toFixed(2)); save = now; }
+    raf = requestAnimationFrame(frame);
+  };
+  draw(reduce ? 2.4 : ((performance.now()-t0)/1000) % (LOOP*4));   // paint immediately, even before the first rAF
+  if (reduce) running = false; else raf = requestAnimationFrame(frame);
+  canvas.classList.add('on');
+  // Anima solo si la pestaña está visible Y el loto está en pantalla. Sin `root`, el
+  // IntersectionObserver mide contra el viewport de la página que incrusta el iframe,
+  // así que al hacer scroll más allá del hero la animación se pausa (ahorra GPU/batería).
+  const update = () => {
+    const next = !reduce && !document.hidden && inView;
+    if (next === running) return;
+    running = next; last = 0;
+    if (running) raf = requestAnimationFrame(frame); else cancelAnimationFrame(raf);
+  };
+  document.addEventListener('visibilitychange', update);
+  new IntersectionObserver(([e]) => { inView = e.isIntersecting; update(); }).observe(canvas);
+};
+img.src = SRC;
+})();
+</script>
+</body>
+</html>

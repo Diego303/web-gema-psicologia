@@ -1,5 +1,5 @@
 {
-  "_ayuda": "Edita aquí TODOS los textos y datos de la web. Valores de ejemplo a sustituir por datos reales (en 'global'): phone, whatsapp, email, colegiada y booking.presencial / booking.online.",
+  "_ayuda": "Edita aquí TODOS los textos y datos de la web. Los datos de contacto (phone, whatsapp, email, colegiada) y la reserva (booking: enlace, texto del botón y modalidades) están en 'global'.",
 
   "global": {
     "brand": "Gema Mascaraque Psicología",
@@ -9,11 +9,13 @@
     "phone": "+34 649 68 28 91",
     "whatsapp": "+34 649 38 28 91",
     "email": "gemiangel21@gmail.com",
-    "location": "Alcalá de Henares (Madrid)",
-    "online": "Desde cualquier parte",
     "booking": {
-      "presencial": "https://www.doctoralia.es/gema-mascaraque-ruiz-4/psicologo/torrejon-de-ardoz?prevent-patient-app-banner=true&utm_source=google&utm_medium=gmb&utm_campaign=214098&utm_content=book_visit&rwg_token=AFd1xnF4CCLCMLwl1UccA2Tsq_wUxLRGbO07siG-tGJyu3H1HpmyA9RQ8-b3QmC0UdCmbRCeDxASt7oCIGknM-6hYZTDxI3XaA%3D%3D#highlight-calendar",
-      "online": "https://www.doctoralia.es/gema-mascaraque-ruiz-4/psicologo/torrejon-de-ardoz?prevent-patient-app-banner=true&utm_source=google&utm_medium=gmb&utm_campaign=214098&utm_content=book_visit&rwg_token=AFd1xnF4CCLCMLwl1UccA2Tsq_wUxLRGbO07siG-tGJyu3H1HpmyA9RQ8-b3QmC0UdCmbRCeDxASt7oCIGknM-6hYZTDxI3XaA%3D%3D#highlight-calendar"
+      "url": "https://www.doctoralia.es/gema-mascaraque-ruiz-4/psicologo/torrejon-de-ardoz?prevent-patient-app-banner=true&utm_source=google&utm_medium=gmb&utm_campaign=214098&utm_content=book_visit&rwg_token=AFd1xnF4CCLCMLwl1UccA2Tsq_wUxLRGbO07siG-tGJyu3H1HpmyA9RQ8-b3QmC0UdCmbRCeDxASt7oCIGknM-6hYZTDxI3XaA%3D%3D#highlight-calendar",
+      "button": "Reservar",
+      "modes": [
+        { "label": "Presencial", "text": "Alcalá de Henares (Madrid)" },
+        { "label": "Online", "text": "Desde cualquier parte" }
+      ]
     },
     "nav": [
       { "label": "Inicio", "key": "inicio", "path": "" },
@@ -55,15 +57,7 @@
       "eyebrow": "Servicios",
       "title": "¿De qué forma te puedo",
       "titleAccent": "acompañar?",
-      "intro": "Sé que cuidarse no es algo fácil, supone mucho tiempo y esfuerzo, y muchas veces no sabemos cómo empezar a hacerlo. Por eso, me adapto a tu situación y necesidades desde el primer momento, ofreciendo diferentes formas de empezar este camino:",
-      "buttons": {
-        "presencial": "Reservar presencial",
-        "online": "Reservar online"
-      },
-      "chips": {
-        "presencial": "Presencial",
-        "online": "Online"
-      }
+      "intro": "Sé que cuidarse no es algo fácil, supone mucho tiempo y esfuerzo, y muchas veces no sabemos cómo empezar a hacerlo. Por eso, me adapto a tu situación y necesidades desde el primer momento, ofreciendo diferentes formas de empezar este camino:"
     },
     "workTitle": "¿Qué podemos trabajar juntos?",
     "blocks": [
@@ -143,11 +137,7 @@
     ],
     "cta": {
       "title": "¿Damos el primer paso?",
-      "text": "Reserva una primera sesión. Elige la modalidad que mejor te venga.",
-      "buttons": {
-        "presencial": "Reservar presencial",
-        "online": "Reservar online"
-      }
+      "text": "Reserva una primera sesión. Elige la modalidad que mejor te venga."
     }
   },
 
@@ -214,10 +204,6 @@
       "correo": "Correo"
     },
     "reservaText": "O reserva directamente tu cita:",
-    "buttons": {
-      "presencial": "Reservar presencial",
-      "online": "Reservar online"
-    },
     "imageAlt": "Gema Mascaraque atendiendo por teléfono"
   }
 }

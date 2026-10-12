@@ -17,19 +17,38 @@ const c = content.inicio.hero;
 </section>
 
 <script>
-  // Coloca el loto en el hueco libre BAJO el texto, sin superponerse, sea cual sea el
-  // tamaño de pantalla. El iframe empieza arriba del hero (el cielo queda detrás del
-  // título) y mide «alto del hero + alto ocupado por el texto»: así su centro —donde el
-  // shader dibuja el loto— cae en el centro del espacio entre el final del texto y el
-  // final del hero. Lo que sobra por abajo lo recorta el overflow:hidden del hero.
-  // Se recalcula al cambiar el tamaño de la ventana o del texto (p. ej. al cargar la fuente).
+  // Coloca el loto ENTERO (pétalos y hojas) en el hueco libre entre el texto y la onda
+  // inferior, sin superponerse, sea cual sea el tamaño de pantalla. Para ello ajusta el
+  // alto (= tamaño del loto) y la posición vertical del iframe; lo que sobra por arriba
+  // o por abajo lo recorta el overflow:hidden del hero. Se recalcula al cambiar el tamaño
+  // de la ventana o del texto (p. ej. al cargar la fuente).
+  //
+  // Geometría de public/lotus/assets/lotus.png (1280×714): el loto ocupa en vertical de
+  // y=320 (punta de los pétalos) a y=440 (hojas) y mide ~196px de ancho. Con el iframe
+  // más «alto» que la imagen (ancho/alto ≤ IA), el shader la muestra entera en vertical
+  // ampliada ×1.02, así que una altura y de la imagen cae en la fracción
+  // 0.5 + (y/714 − 0.5)·1.02 del alto del iframe.
+  const IA = 1280 / 714;
+  const toFrame = (y: number) => 0.5 + (y / 714 - 0.5) * 1.02;
+  const TOP = toFrame(320), BOTTOM = toFrame(440);
+  const MID = (TOP + BOTTOM) / 2, SPAN = BOTTOM - TOP;
+  const WIDTH = (196 / 1280) * IA * 1.02; // ancho del loto / alto del iframe
+
   const hero = document.querySelector<HTMLElement>('.hero');
   const text = hero?.querySelector<HTMLElement>('.hero-text');
   const frame = hero?.querySelector<HTMLIFrameElement>('.lotus-bg');
   if (hero && text && frame) {
     const fit = () => {
-      const textBottom = text.getBoundingClientRect().bottom - hero.getBoundingClientRect().top;
-      frame.style.height = `${Math.round(hero.clientHeight + textBottom)}px`;
+      const W = hero.clientWidth, heroH = hero.clientHeight;
+      const a = text.getBoundingClientRect().bottom - hero.getBoundingClientRect().top + 24; // bajo el texto
+      const b = heroH - 60; // por encima de la onda inferior
+      // Tamaño: el loto ocupa ~62% del hueco y como mucho el 80% del ancho de pantalla.
+      let H = Math.min(((b - a) * 0.62) / SPAN, (0.8 * W) / WIDTH);
+      // Mínimos: mantener el encuadre que asumen las fórmulas (W/IA), que el iframe empiece
+      // por encima del hero (cielo detrás del título) y que llegue hasta abajo.
+      H = Math.max(H, W / IA, (a + b) / 2 / MID, (heroH - (a + b) / 2) / (1 - MID));
+      frame.style.height = `${Math.round(H)}px`;
+      frame.style.top = `${Math.round((a + b) / 2 - MID * H)}px`; // loto centrado en el hueco
     };
     const ro = new ResizeObserver(fit);
     ro.observe(hero);

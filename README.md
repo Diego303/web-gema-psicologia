@@ -30,9 +30,8 @@ Todos se ejecutan desde la raíz del proyecto:
 | `pnpm build`    | Genera el sitio de producción en `./dist/`              |
 | `pnpm preview`  | Previsualiza el build local antes de desplegar          |
 
-> ℹ️ El sitio se publica bajo un subpath (`base: '/web-gema-psicologia/'`).
-> En `pnpm dev` y `pnpm preview` la web vive en
-> `http://localhost:4321/web-gema-psicologia/` (no en la raíz `/`).
+> ℹ️ La web se publica en la raíz de su dominio, `https://gemascaraquepsicologia.com`
+> (`base: '/'`). En `pnpm dev` y `pnpm preview` vive en `http://localhost:4321/`.
 
 ---
 
@@ -138,7 +137,8 @@ El repositorio incluye el workflow `.github/workflows/deploy.yml` (acción ofici
 
 1. En GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 2. Haz `push` a la rama `main`. El workflow construye y publica automáticamente.
-3. La web quedará en `https://Diego303.github.io/web-gema-psicologia/`.
+3. La web queda en `https://gemascaraquepsicologia.com` (dominio de IONOS apuntando a
+   GitHub Pages; cómo se configura: [`GUIA-DOMINIO-IONOS.md`](GUIA-DOMINIO-IONOS.md)).
 
 > La build del CI es reproducible: instala con el `pnpm-lock.yaml` commiteado y con
 > la versión de pnpm de `packageManager`. Si actualizas pnpm en local, cambia
@@ -146,13 +146,14 @@ El repositorio incluye el workflow `.github/workflows/deploy.yml` (acción ofici
 
 ### Configuración de rutas (`astro.config.mjs`)
 ```js
-site: 'https://Diego303.github.io',
-base: '/web-gema-psicologia/',  // sitio de proyecto
+site: 'https://gemascaraquepsicologia.com',
+base: '/',  // la web vive en la raíz del dominio
 trailingSlash: 'ignore',
 integrations: [sitemap()],
 ```
-Si algún día renombras el repositorio o lo conviertes en sitio de usuario
-(`Diego303.github.io`), cambia `base` a `'/'`.
+Si algún día se deja de usar el dominio propio y se vuelve a
+`https://diego303.github.io/web-gema-psicologia/`, pon `site: 'https://diego303.github.io'`
+y `base: '/web-gema-psicologia/'`, y actualiza `public/robots.txt`.
 
 ---
 
